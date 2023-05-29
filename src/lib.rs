@@ -1,15 +1,33 @@
 use std::cmp::Ordering;
 
-pub fn bsearch(slice: &[u32], niddle: u32) -> Option<usize> {
-    if slice.is_empty() {
-        return None;
-    }
+trait BinarySearch<T> {
+    fn bsearch(&self, niddle: T) -> Option<usize>;
+}
 
-    let mid = slice.len() / 2;
-    match niddle.cmp(&slice[mid]) {
-        Ordering::Less => bsearch(&slice[..mid], niddle),
-        Ordering::Equal => Some(mid),
-        Ordering::Greater => bsearch(&slice[mid + 1..], niddle).map(|idx| mid + 1 + idx),
+impl<T> BinarySearch<T> for &[T]
+where
+    T: Ord,
+{
+    fn bsearch(&self, niddle: T) -> Option<usize> {
+        if self.is_empty() {
+            return None;
+        }
+
+        let mid = self.len() / 2;
+        match niddle.cmp(&self[mid]) {
+            Ordering::Less => (&self[..mid]).bsearch(niddle),
+            Ordering::Equal => Some(mid),
+            Ordering::Greater => (&self[mid + 1..]).bsearch(niddle).map(|idx| mid + 1 + idx),
+        }
+    }
+}
+
+impl<T> BinarySearch<T> for Vec<T>
+where
+    T: Ord,
+{
+    fn bsearch(&self, niddle: T) -> Option<usize> {
+        self.as_slice().bsearch(niddle)
     }
 }
 
@@ -33,7 +51,7 @@ mod tests {
             .iter()
             .enumerate()
             .find_map(|(i, &x)| (x == niddle).then_some(i));
-        let actual = bsearch(&vec, niddle);
+        let actual = vec.bsearch(niddle);
 
         assert_eq!(expected, actual);
     }
