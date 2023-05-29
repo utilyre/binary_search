@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug",
+      "type": "codelldb",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/target/debug/deps/binary_search-77b282e697e69b3a",
+      "args": ["--test", "${input:pattern}"]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "pattern",
+      "type": "promptString",
+      "description": "Test name: "
+    }
+  ]
+}
