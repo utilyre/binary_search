@@ -7,9 +7,9 @@ pub fn bsearch(slice: &[u32], niddle: u32) -> Option<usize> {
 
     let mid = slice.len() / 2;
     match niddle.cmp(&slice[mid]) {
-        Ordering::Less => bsearch(&slice[..mid - 1], niddle),
+        Ordering::Less => bsearch(&slice[..mid], niddle),
         Ordering::Equal => Some(mid),
-        Ordering::Greater => bsearch(&slice[mid..], niddle).map(|idx| mid + idx),
+        Ordering::Greater => bsearch(&slice[mid + 1..], niddle).map(|idx| mid + 1 + idx),
     }
 }
 
@@ -41,6 +41,7 @@ mod tests {
     #[test]
     fn find_existing() {
         find_and_check(876);
+        find_and_check(10152);
     }
 
     #[test]
