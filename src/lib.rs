@@ -4,30 +4,24 @@ trait BinarySearch<T> {
     fn bsearch(&self, niddle: T) -> Option<usize>;
 }
 
-impl<T> BinarySearch<T> for &[T]
+impl<S, T> BinarySearch<T> for S
 where
+    S: ?Sized,
     T: Ord,
+    for<'a> &'a [T]: From<&'a S>,
 {
     fn bsearch(&self, niddle: T) -> Option<usize> {
-        if self.is_empty() {
+        let slice: &[T] = self.into();
+        if slice.is_empty() {
             return None;
         }
 
-        let mid = self.len() / 2;
-        match niddle.cmp(&self[mid]) {
-            Ordering::Less => (&self[..mid]).bsearch(niddle),
+        let mid = slice.len() / 2;
+        match niddle.cmp(&slice[mid]) {
+            Ordering::Less => slice[..mid].bsearch(niddle),
             Ordering::Equal => Some(mid),
-            Ordering::Greater => (&self[mid + 1..]).bsearch(niddle).map(|idx| mid + 1 + idx),
+            Ordering::Greater => slice[mid + 1..].bsearch(niddle).map(|idx| mid + 1 + idx),
         }
-    }
-}
-
-impl<T> BinarySearch<T> for Vec<T>
-where
-    T: Ord,
-{
-    fn bsearch(&self, niddle: T) -> Option<usize> {
-        self.as_slice().bsearch(niddle)
     }
 }
 
