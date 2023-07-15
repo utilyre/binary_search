@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 trait BinarySearch<T> {
-    fn bsearch(&self, niddle: T) -> Option<usize>;
+    fn bsearch(&self, needle: T) -> Option<usize>;
 }
 
 impl<S, T> BinarySearch<T> for S
@@ -10,17 +10,17 @@ where
     T: Ord,
     for<'a> &'a [T]: From<&'a S>,
 {
-    fn bsearch(&self, niddle: T) -> Option<usize> {
+    fn bsearch(&self, needle: T) -> Option<usize> {
         let slice: &[T] = self.into();
         if slice.is_empty() {
             return None;
         }
 
         let mid = slice.len() / 2;
-        match niddle.cmp(&slice[mid]) {
-            Ordering::Less => slice[..mid].bsearch(niddle),
+        match needle.cmp(&slice[mid]) {
+            Ordering::Less => slice[..mid].bsearch(needle),
             Ordering::Equal => Some(mid),
-            Ordering::Greater => slice[mid + 1..].bsearch(niddle).map(|idx| mid + 1 + idx),
+            Ordering::Greater => slice[mid + 1..].bsearch(needle).map(|idx| mid + 1 + idx),
         }
     }
 }
@@ -38,14 +38,14 @@ mod tests {
         vec
     }
 
-    fn find_and_check(niddle: u32) {
+    fn find_and_check(needle: u32) {
         let vec = initialize_vec();
 
         let expected = vec
             .iter()
             .enumerate()
-            .find_map(|(i, &x)| (x == niddle).then_some(i));
-        let actual = vec.bsearch(niddle);
+            .find_map(|(i, &x)| (x == needle).then_some(i));
+        let actual = vec.bsearch(needle);
 
         assert_eq!(expected, actual);
     }
